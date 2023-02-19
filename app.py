@@ -1,6 +1,8 @@
 from flask      import Flask, request, jsonify, current_app
 from flask.json import JSONEncoder
 from sqlalchemy import create_engine, text
+#SQLalchemy가 DB에 접속하려면 DB의 접속 정보를 알아야함. 이러한 접속 정보를 받아서 연결하는 객체가 engine이다. 이는 따로 config.py에 설정해두었다.
+
 
 ## Default JSON encoder는 set를 JSON으로 변환할 수 없다.
 ## 그럼으로 커스텀 엔코더를 작성해서 set을 list로 변환하여
@@ -94,18 +96,26 @@ def get_timeline(user_id):
         'tweet'   : tweet['tweet']
     } for tweet in timeline]
 
+
+#Query문은 따로 함수로 구현하였다. 그래서 밑에서는 따로 query문을 작성하지 않고, 함수로 호출해 작성한다.
+
+
 def create_app(test_config = None):
     app = Flask(__name__)
-
+    #Flask가 create_app이라는 이름의 함수를 자동으로 팩토리 함수로 인식해 해당 함수를 통해 Flask를 실행시킨다.
+    
     app.json_encoder = CustomJSONEncoder
-
+    
     if test_config is None:
-        app.config.from_pyfile("config.py")
+        app.config.from_pyfile("config.py") #만약 설정을 받지 않았다면 따로 만들어둔 config.py에서 정보를 가져온다.
     else:
         app.config.update(test_config)
 
     database     = create_engine(app.config['DB_URL'], encoding = 'utf-8', max_overflow = 0)
+    #위에 import문에서 설명한 create_engine함수이다. 이를 통해 sqlalchemy와 DB를 연결해준다.
+    
     app.database = database
+    #위에서 설정한 engine 객체를 Flask 객체에 저장함으로써, create_app 함수 외부에서도 데이터베이스를 사용 할 수 있게 해준다.
 
     @app.route("/ping", methods=['GET'])
     def ping():
