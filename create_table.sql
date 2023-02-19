@@ -19,6 +19,7 @@ CREATE TABLE users_follow_list(
     CONSTRAINT users_follow_list_follow_user_id_fkey FOREIGN KEY (follow_user_id) REFERENCES users(id)
 );
 
+
 CREATE TABLE tweets(
     id INT NOT NULL AUTO_INCREMENT,
     user_id INT NOT NULL,
