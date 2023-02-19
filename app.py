@@ -15,6 +15,8 @@ class CustomJSONEncoder(JSONEncoder):
         return JSONEncoder.default(self, obj)
 
 def get_user(user_id):
+    #현재 활동을 다루는 current_app 함수를 이용한다.
+    #또한 데이터베이스 query를 실행하고자 할때는 Engine(객체).execute 함수를 사용한다.
     user = current_app.database.execute(text("""
         SELECT 
             id,
@@ -25,7 +27,7 @@ def get_user(user_id):
         WHERE id = :user_id
     """), {
         'user_id' : user_id 
-    }).fetchone()
+    }).fetchone() #하나만 가져온다
 
     return {
         'id'      : user['id'],
